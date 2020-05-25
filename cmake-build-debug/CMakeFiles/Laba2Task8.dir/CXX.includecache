@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/cocoryse/Desktop/Учусь/c++/Laba2Task8/CommunalPayment.cpp
+CommunalPayment.h
+/Users/cocoryse/Desktop/Учусь/c++/Laba2Task8/CommunalPayment.h
+utility
+-
+set
+-
+fstream
+-
+
+/Users/cocoryse/Desktop/Учусь/c++/Laba2Task8/CommunalPayment.h
+iostream
+-
+string
+-
+
