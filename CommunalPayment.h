@@ -32,8 +32,7 @@ enum class PaymentType {
     PowerSupply
 };
 
-class CommunalPayment {
-public:
+struct CommunalPayment {
     Address address;
     string owner_surname;
     PaymentType type;
@@ -49,11 +48,15 @@ public:
                     int new_sum,
                     int new_penny,
                     int new_days_past_due);
-    
+
     CommunalPayment();
 
-    friend std::istream & operator>>(std::istream &in, CommunalPayment &payment);
-    friend std::ostream & operator<<(std::ostream &out, const CommunalPayment &payment);
-    bool operator == (const CommunalPayment& payment) const;
-    bool operator < (const CommunalPayment& payment) const;
+    friend std::istream &operator>>(std::istream &in, CommunalPayment &payment);
+
+    friend std::ostream &operator<<(std::ostream &out, const CommunalPayment &payment);
+
+    bool operator==(const CommunalPayment &payment) const;
+
+    bool operator<(const CommunalPayment &payment) const;
+
 };

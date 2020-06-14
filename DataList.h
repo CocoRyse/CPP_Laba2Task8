@@ -18,10 +18,10 @@ using std::ofstream;
 
 template<typename T>
 class DataList {
-public:
     deque<T> deq;
     deque<T> helper;
 
+public:
     DataList() : deq(), helper() { }
 
     void add_data()
@@ -72,27 +72,27 @@ public:
         cout << "Данные успешно изменены." << endl;
     }
 
-    void load_to_file(ofstream& _file, typename deque<T>::iterator x)
+    void write_to_file(ofstream& _file, typename deque<T>::iterator x)
     {
         ostream_iterator<T> is(_file, "\n");
         *is = *x;
         cout << "Данные успешно добавлены в файл" << endl;
     }
 
-    void load_to_file_some_data(ofstream& _file)
+    void write_to_file_some_data(ofstream& _file)
     {
         copy(deq.begin(), deq.end(), ostream_iterator<T>(_file, "\n"));
         cout << "Данные успешно добавлены в файл" << endl;
     }
 
-    void load_from_file(ifstream& _file)
+    void read_from_file(ifstream& _file)
     {
         istream_iterator<T> is(_file);
         deq.push_back(*is);
         cout << "Данные успешно загружены из файла" << endl;
     }
 
-    void load_from_file_some_data(ifstream& _file)
+    void read_from_file_some_data(ifstream& _file)
     {
         while (_file.peek() != EOF)
         {
@@ -102,5 +102,32 @@ public:
 
         }
         cout << "Данные успешно загружены из файла" << endl;
+    }
+
+    deque<CommunalPayment>::iterator find_if(const std::function<bool(CommunalPayment)> predicate) {
+        return std::find_if(deq.begin(), deq.end(), predicate);
+    }
+
+    deque<CommunalPayment>::iterator lower_bound(CommunalPayment payment) {
+        return std::lower_bound(deq.begin(), deq.end(), payment);
+    }
+
+    void sort(const std::function<bool(CommunalPayment, CommunalPayment)> comparator) {
+        std::sort(deq.begin(), deq.end(), comparator);
+    }
+
+    void copy_if(const std::function<bool(CommunalPayment)> predicate) {
+        helper.clear();
+        std::copy_if(deq.begin(), deq.end(), back_inserter(helper), predicate);
+    }
+
+    void clear() {
+        helper.clear();
+        deq.clear();
+    }
+
+    void print_data() {
+        for (auto i = deq.begin(); i < deq.end(); i++)
+            print_data(i);
     }
 };

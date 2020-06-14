@@ -29,18 +29,8 @@ using std::endl;
 using std::string;
 using std::ofstream;
 
-void Text_menu()
-{
-    cout << "Выберите действие: " << endl;
-    cout << "1. Добавить данные" << endl;
-    cout << "2. Сохранить данные" << endl;
-    cout << "3. Изменить данные" << endl;
-    cout << "4. Удалить данные" << endl;
-    cout << "5. Найти данные" << endl;
-    cout << "6. Составить выборки" << endl;
-    cout << "7. Очисить очередь" << endl;
-    cout << "8. Вывести данные на экран" << endl;
-    cout << "0. Выход" << endl;
+void clear_input() {
+    cin.clear();
 }
 
 void Sub_text_menu()
@@ -58,115 +48,121 @@ void Add(DataList<CommunalPayment>& a)
 {
     char input;
     string file_name;
+
     cout << endl;
     cout << "1. Ввод данных с клавиатуры" << endl;
     cout << "2. Загрузить данные из файла" << endl;
     cin >> input;
-    cin.get();
-    if (input == '1')
-    {
+    clear_input();
+
+    if (input == '1') {
         a.add_data();
     }
-    if (input == '2')
+    else if (input == '2')
     {
         cout << "Введите имя файла: ";
         cin >> file_name;
         file_name += ".txt";
         ifstream _file(file_name, std::ios_base::in);
         cout << endl;
+
         cout << "1. Загрузить одну запись" << endl;
         cout << "2. Загрузить все записи" << endl;
         cin >> input;
-        cin.get();
+        clear_input();
+
         if (input == '1')
-            a.load_from_file(_file);
-        if (input == '2')
-            a.load_from_file_some_data(_file);
+            a.read_from_file(_file);
+        else if (input == '2')
+            a.read_from_file_some_data(_file);
+        else {
+            cout << "Неопознанная команда!" << endl;
+            return;
+        }
+
         cout << "Данные успешно добавлены." << endl;
+    } else {
+        cout << "Неизвестная команда" << endl;
     }
 }
 
-void Save(DataList<CommunalPayment> a)
+void Save(DataList<CommunalPayment> data_list)
 {
     CommunalPayment payment;
     char input;
-    deque<CommunalPayment>::iterator x;
+    deque<CommunalPayment>::iterator iterator;
     string file_name;
+
     cout << "Введите имя файла: ";
     cin >> file_name;
     file_name += ".txt";
     ofstream _file(file_name, std::ios_base::app);
     cout << "1. Сохранить одну запись" << endl;
     cout << "2. Сохранить все записи" << endl;
+
     cin >> input;
-    cin.get();
+    clear_input();
     cout << endl;
     if (input == '1')
     {
         cin >> payment;
-        x = find_if(a.deq.begin(), a.deq.end(),[&payment](const CommunalPayment& p)
-        {
-            return payment == p;
-        });
-        a.print_data(x);
+        iterator = data_list.find_if([&payment](const CommunalPayment& p) { return payment == p; });
+        data_list.print_data(iterator);
         cin >> input;
-        a.load_to_file(_file, x);
+        data_list.write_to_file(_file, iterator);
     }
     if (input == '2')
     {
-        a.helper = a.deq;
-        a.load_to_file_some_data(_file);
+//        data_list.helper = data_list.deq; // кхе-кхе
+        data_list.write_to_file_some_data(_file);
     }
 }
 
-void Change(DataList<CommunalPayment>& a)
+void Change(DataList<CommunalPayment>& data_list)
 {
     CommunalPayment payment;
-    deque<CommunalPayment>::iterator x;
+    deque<CommunalPayment>::iterator iterator;
+
     cin >> payment;
-    x = find_if(a.deq.begin(), a.deq.end(), [&payment](const CommunalPayment& p)
-    {
-        return payment == p;
-    });
+
+    iterator = data_list.find_if([&payment](const CommunalPayment& p) { return payment == p; });
+
     cout << "Было..." << endl;
-    a.print_data(x);
+    data_list.print_data(iterator);
+
     cout << "Стало..." << endl;
-    a.change_data(x);
+    data_list.change_data(iterator);
 }
 
-void Delete(DataList<CommunalPayment>& a)
+void Delete(DataList<CommunalPayment>& data_list)
 {
     CommunalPayment payment;
-    deque<CommunalPayment>::iterator x;
+    deque<CommunalPayment>::iterator iterator;
+
     cin >> payment;
-    x = find_if(a.deq.begin(), a.deq.end(), [&payment](const CommunalPayment& p)
-    {
-        return payment == p;
-    });
-    a.delete_data(x);
+
+    iterator = data_list.find_if([&payment](const CommunalPayment& p) { return payment == p; });
+    data_list.delete_data(iterator);
 }
 
-void Search(DataList<CommunalPayment> a)
+void Search(DataList<CommunalPayment> data_list)
 {
     CommunalPayment payment;
-    deque<CommunalPayment>::iterator x;
-    char tmp;
+    deque<CommunalPayment>::iterator iterator;
+    char input;
+
     cin >> payment;
     cout << "1. Использовать линейный поиск" << endl;
     cout << "2. Использовать бинарный поиск" << endl;
-    cin >> tmp;
-    cin.get();
-    if (tmp == '1')
-    {
-        x = find_if(a.deq.begin(), a.deq.end(), [&payment](const CommunalPayment& p)
-        {
-            return payment == p;
-        });
+    cin >> input;
+    clear_input();
+
+    if (input == '1') {
+        iterator = data_list.find_if([&payment](const CommunalPayment &p) { return payment == p; });
     }
-    if (tmp == '2')
+    else if (input == '2')
     {
-        sort(a.deq.begin(), a.deq.end(), [](const CommunalPayment &p, const CommunalPayment &payment)
-        {
+        data_list.sort([](const CommunalPayment &p, const CommunalPayment &payment) {
             if (payment == p)
                 return 0;
             else if (payment.penny > p.penny)
@@ -174,87 +170,119 @@ void Search(DataList<CommunalPayment> a)
             else
                 return -1;
         });
-        x = lower_bound(a.deq.begin(), a.deq.end(), payment);
-        x = x - 1;
+        iterator = data_list.lower_bound(payment);
+        iterator = iterator - 1;
+    } else {
+        cout << "Неопознанная команда!" << endl;
     }
-    a.print_data(x);
+
+    data_list.print_data(iterator);
+
     cout << "1. Cохранить данные в файл" << endl;
     cout << "0. Не сохранять данные в файл" << endl;
-    cin >> tmp;
-    if (tmp == '1')
+    cin >> input;
+    if (input == '1')
     {
-        string temp2;
+        string file_name;
         cout << "Введите имя файла: ";
-        cin >> temp2;
-        temp2 += ".txt";
-        ofstream _file(temp2, std::ios_base::app);
-        a.load_to_file(_file, x);
+        cin >> file_name;
+        file_name += ".txt";
+        ofstream _file(file_name, std::ios_base::app);
+        data_list.write_to_file(_file, iterator);
         cout << "Данные успешно добавлены в файл" << endl;
-    }
+    } else if (input != '2')
+        cout << "Неопознанная команда!" << endl;
 }
 
-void Selection(DataList<CommunalPayment> a)
+void select_by_owner(DataList<CommunalPayment> data_list) {
+    string surname;
+
+    cout << "Фамилия владельца: ";
+    cin >> surname;
+
+    data_list.copy_if([&surname](const CommunalPayment &p) { return p.owner_surname == surname; });
+    data_list.print_some_data();
+}
+
+void select_by_flat(DataList<CommunalPayment> data_list) {
+    int flat;
+
+    cout << "Номер квартиры: ";
+    cin >> flat;
+    cout << endl;
+
+    data_list.copy_if([&flat](const CommunalPayment &p) { return p.address.flat == flat; });
+    data_list.print_some_data();
+}
+
+void select_by_house(DataList<CommunalPayment> data_list) {
+    int house;
+
+    cout << "Номер дома: ";
+    cin >> house;
+
+    data_list.copy_if([&house](const CommunalPayment &p) { return p.address.house == house; });
+    data_list.print_some_data();
+}
+
+void select_by_date(DataList<CommunalPayment> data_list) {
+    Date date{};
+
+    cout << "Дата платежа: ";
+    cin >> date;
+
+    data_list.copy_if([&date](const CommunalPayment &p) { return p.date == date; });
+    data_list.print_some_data();
+}
+
+void select_by_debt_state(DataList<CommunalPayment> data_list) {
+    bool is_owe;
+    char input;
+
+    cout << "1 — должен\n"
+            "0 — не должен\n"
+            "Состояние долга: ";
+    cin >> input;
+
+    is_owe = input != '0';
+    data_list.copy_if([&is_owe](const CommunalPayment &p) {
+        return p.penny > 0 || p.days_past_due > 0 == is_owe;
+    });
+
+    data_list.print_some_data();
+}
+
+void Selection(const DataList<CommunalPayment>& data_list)
 {
     char tmp;
-    string surname;
-    int flat;
-    int house;
-    Date date{};
-    bool is_owe;
     bool control = true;
     while (control)
     {
-        a.helper.clear();
         Sub_text_menu();
         cin >> tmp;
-        cin.get();
+        clear_input();
         switch (tmp)
         {
-//            cout << "1. Выборка с одинаковой фамилией владельца" << endl;
-//            cout << "2. Выборка с одинаковым номером дома" << endl;
-//            cout << "3. Выборка с одинаковым номеров квартиры" << endl;
-//            cout << "4. Выборка с одинаковой датой" << endl;
-//            cout << "4. Выборка с одинаковым статусом долга" << endl;
-            case '1':
-                cout << "Фамилия владельца: "; cin >> surname;
-                copy_if(a.deq.begin(), a.deq.end(), back_inserter(a.helper), [&surname](const CommunalPayment& p){
-                    return p.owner_surname == surname;
-                });
-                a.print_some_data();
+            case '1': {
+                select_by_owner(data_list);
                 break;
-
-            case '2':
-                cout << "Номер квартиры: "; cin >> flat; cout << endl;
-                copy_if(a.deq.begin(), a.deq.end(), back_inserter(a.helper), [&flat](const CommunalPayment& p){
-                    return p.address.flat == flat;
-                });
-                a.print_some_data();
+            }
+            case '2': {
+                select_by_flat(data_list);
                 break;
-            case '3':
-                cout << "Номер дома: "; cin >> house;
-                copy_if(a.deq.begin(), a.deq.end(), back_inserter(a.helper), [&house](const CommunalPayment& p){
-                    return p.address.house == house;
-                });
-                a.print_some_data();
+            }
+            case '3': {
+                select_by_house(data_list);
                 break;
-            case '4':
-                cout << "Дата платежа: "; cin >> date;
-                copy_if(a.deq.begin(), a.deq.end(), back_inserter(a.helper), [&date](const CommunalPayment& p){
-                    return p.date == date;
-                });
-                a.print_some_data();
+            }
+            case '4': {
+                select_by_date(data_list);
                 break;
-            case '5':
-                char input;
-                cout << "1 — должен\n"
-                        "0 — не должен\n"
-                        "Состояние долга: "; cin >> input;
-                is_owe = input != '0';
-                copy_if(a.deq.begin(), a.deq.end(), back_inserter(a.helper), [&is_owe](const CommunalPayment& p){
-                    return p.penny > 0 || p.days_past_due > 0 == is_owe;
-                });
-                a.print_some_data();
+            }
+            case '5': {
+                select_by_debt_state(data_list);
                 break;
+            }
             case '0':
                 control = false;
                 break;
@@ -265,18 +293,32 @@ void Selection(DataList<CommunalPayment> a)
     }
 }
 
+void Text_menu()
+{
+    cout << "Выберите действие: " << endl;
+    cout << "1. Добавить данные" << endl;
+    cout << "2. Сохранить данные" << endl;
+    cout << "3. Изменить данные" << endl;
+    cout << "4. Удалить данные" << endl;
+    cout << "5. Найти данные" << endl;
+    cout << "6. Составить выборки" << endl;
+    cout << "7. Очисить очередь" << endl;
+    cout << "8. Вывести данные на экран" << endl;
+    cout << "0. Выход" << endl;
+}
+
 int main()
 {
     setlocale(LC_ALL, "Rus");
     bool control = true;
     DataList<CommunalPayment> data_list;
     char tmp;
-
+    clear_input();
     while (control)
     {
         Text_menu();
         cin >> tmp;
-        cin.get();
+        clear_input();
         switch (tmp)
         {
             case '1':
@@ -298,12 +340,11 @@ int main()
                 Selection(data_list);
                 break;
             case '7':
-                data_list.deq.clear();
+                data_list.clear();
                 cout << "Очередь успешно очищена" << endl;
                 break;
             case '8':
-                for (auto i = data_list.deq.begin(); i < data_list.deq.end(); i++)
-                    data_list.print_data(i);
+                data_list.print_data();
                 break;
             case '0':
                 control = false;
