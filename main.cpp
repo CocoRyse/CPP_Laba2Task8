@@ -33,17 +33,6 @@ void clear_input() {
     cin.clear();
 }
 
-void Sub_text_menu()
-{
-    cout << "Выберите действие: " << endl;
-    cout << "1. Выборка с одинаковой фамилией владельца" << endl;
-    cout << "2. Выборка с одинаковым номером дома" << endl;
-    cout << "3. Выборка с одинаковым номеров квартиры" << endl;
-    cout << "4. Выборка с одинаковой датой" << endl;
-    cout << "5. Выборка с одинаковым статусом долга" << endl;
-    cout << "0. Отмена" << endl;
-}
-
 void fread(DataList<CommunalPayment>& dataList)
 {
     string file_name;
@@ -176,20 +165,17 @@ void Search(DataList<CommunalPayment> data_list)
     if (input == '2') {
         data_list.sort(comparator);
         iterator = data_list.lower_bound(payment);
-
         if (iterator == data_list.end()) {
             cout << "Данные не найдены" << endl;
             return;
         }
-
-        bool biba = !(*iterator == payment);
         iterator = !(*iterator == payment) ? iterator - 1 : iterator;
     } else if (input == '1') {
         iterator = data_list.find_if([&payment](const CommunalPayment &p) { return payment == p; });
     } else {
         cout << "Неопознанная команда!" << endl;
     }
-    bool biba = iterator == data_list.end();
+
     if (iterator == data_list.end() || !(*iterator == payment)) {
         cout << "Данные не найдены" << endl;
         return;
@@ -271,13 +257,24 @@ void select_by_debt_state(DataList<CommunalPayment> data_list) {
     data_list.print_some_data();
 }
 
+void search_menu()
+{
+    cout << "Выберите действие: " << endl;
+    cout << "1. Выборка с одинаковой фамилией владельца" << endl;
+    cout << "2. Выборка с одинаковым номером дома" << endl;
+    cout << "3. Выборка с одинаковым номеров квартиры" << endl;
+    cout << "4. Выборка с одинаковой датой" << endl;
+    cout << "5. Выборка с одинаковым статусом долга" << endl;
+    cout << "0. Отмена" << endl;
+}
+
 void Selection(const DataList<CommunalPayment>& data_list)
 {
     char tmp;
     bool control = true;
     while (control)
     {
-        Sub_text_menu();
+        search_menu();
         cin >> tmp;
         clear_input();
         switch (tmp)

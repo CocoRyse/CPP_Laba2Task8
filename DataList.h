@@ -35,7 +35,7 @@ public:
             cout << "0. Отмена" << endl;
             cin >> input;
             cout << endl;
-            cin.get();
+            cin.clear();
             if (input == '0')
             {
                 Control = false;
