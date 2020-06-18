@@ -117,7 +117,7 @@ public:
         return std::upper_bound(deq.begin(), deq.end(), payment);
     }
 
-    void sort(const std::function<bool(CommunalPayment, CommunalPayment)> comparator) {
+    void sort() {
         std::sort(deq.begin(), deq.end());
     }
 

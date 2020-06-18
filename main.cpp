@@ -143,16 +143,6 @@ void Delete(DataList<CommunalPayment>& data_list)
 
 void Search(DataList<CommunalPayment> data_list)
 {
-    const std::function<bool(CommunalPayment, CommunalPayment)> comparator =
-            [](const CommunalPayment &p, const CommunalPayment &payment) {
-                if (payment == p)
-                    return 0;
-                else if (payment.penny > p.penny)
-                    return 1;
-                else
-                    return -1;
-            };
-
     CommunalPayment payment;
     deque<CommunalPayment>::iterator iterator;
     char input;
@@ -164,7 +154,7 @@ void Search(DataList<CommunalPayment> data_list)
     clear_input();
 
     if (input == '2') {
-        data_list.sort(comparator);
+        data_list.sort();
         iterator = data_list.lower_bound(payment);
         if (iterator == data_list.end()) {
             cout << "Данные не найдены" << endl;
