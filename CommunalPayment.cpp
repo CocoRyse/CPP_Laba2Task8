@@ -225,7 +225,11 @@ bool CommunalPayment::operator==(const CommunalPayment& payment) const {
 }
 
 bool CommunalPayment::operator<(const CommunalPayment &payment) const {
-    return (penny < payment.penny || days_past_due < payment.days_past_due);
+    return owner_surname < payment.owner_surname;/* &&
+           address       < payment.address       &&
+           date          < payment.date          &&
+           penny         < payment.penny         &&
+           days_past_due < payment.days_past_due;*/
 }
 
 bool Date::operator==(Date another) const {
@@ -280,4 +284,12 @@ std::ostream &operator<<(std::ostream &out, const Address &address) {
         out << "Номер квартиры: " << address.flat;
     }
     return out;
+}
+
+bool Address::operator<(const Address &address) const {
+    return house < address.house && flat < address.flat;
+}
+
+bool Date::operator<(const Date &date) const {
+    return year < date.year && month < date.month && day < date.month;
 }

@@ -72,27 +72,27 @@ public:
         cout << "Данные успешно изменены." << endl;
     }
 
-    void write_to_file(ofstream& _file, typename deque<T>::iterator x)
+    void fwrite_part(ofstream& _file, typename deque<T>::iterator x)
     {
         ostream_iterator<T> is(_file, "\n");
         *is = *x;
         cout << "Данные успешно добавлены в файл" << endl;
     }
 
-    void write_to_file_some_data(ofstream& _file)
+    void fwrite_full(ofstream& _file)
     {
         copy(deq.begin(), deq.end(), ostream_iterator<T>(_file, "\n"));
         cout << "Данные успешно добавлены в файл" << endl;
     }
 
-    void read_from_file(ifstream& _file)
+    void fread_part(ifstream& _file)
     {
         istream_iterator<T> is(_file);
         deq.push_back(*is);
         cout << "Данные успешно загружены из файла" << endl;
     }
 
-    void read_from_file_some_data(ifstream& _file)
+    void fread_full(ifstream& _file)
     {
         while (_file.peek() != EOF)
         {
@@ -112,8 +112,12 @@ public:
         return std::lower_bound(deq.begin(), deq.end(), payment);
     }
 
+    deque<CommunalPayment>::iterator upper_bound(CommunalPayment payment) {
+        return std::upper_bound(deq.begin(), deq.end(), payment);
+    }
+
     void sort(const std::function<bool(CommunalPayment, CommunalPayment)> comparator) {
-        std::sort(deq.begin(), deq.end(), comparator);
+        std::sort(deq.begin(), deq.end());
     }
 
     void copy_if(const std::function<bool(CommunalPayment)> predicate) {
@@ -129,5 +133,9 @@ public:
     void print_data() {
         for (auto i = deq.begin(); i < deq.end(); i++)
             print_data(i);
+    }
+
+    deque<CommunalPayment>::iterator end() {
+        return deq.end();
     }
 };

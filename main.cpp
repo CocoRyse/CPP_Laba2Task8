@@ -44,10 +44,37 @@ void Sub_text_menu()
     cout << "0. Отмена" << endl;
 }
 
-void Add(DataList<CommunalPayment>& a)
+void fread(DataList<CommunalPayment>& dataList)
+{
+    string file_name;
+    char input;
+
+    cout << "Введите имя файла: ";
+    cin >> file_name;
+    file_name += ".txt";
+    ifstream _file(file_name, std::ios_base::in);
+    cout << endl;
+
+    cout << "1. Загрузить одну запись" << endl;
+    cout << "2. Загрузить все записи" << endl;
+    cin >> input;
+    clear_input();
+
+    if (input == '1')
+        dataList.fread_part(_file);
+    else if (input == '2')
+        dataList.fread_full(_file);
+    else {
+        cout << "Неопознанная команда!" << endl;
+        return;
+    }
+
+    cout << "Данные успешно добавлены." << endl;
+}
+
+void Add(DataList<CommunalPayment>& dataList)
 {
     char input;
-    string file_name;
 
     cout << endl;
     cout << "1. Ввод данных с клавиатуры" << endl;
@@ -56,31 +83,11 @@ void Add(DataList<CommunalPayment>& a)
     clear_input();
 
     if (input == '1') {
-        a.add_data();
+        dataList.add_data();
     }
     else if (input == '2')
     {
-        cout << "Введите имя файла: ";
-        cin >> file_name;
-        file_name += ".txt";
-        ifstream _file(file_name, std::ios_base::in);
-        cout << endl;
-
-        cout << "1. Загрузить одну запись" << endl;
-        cout << "2. Загрузить все записи" << endl;
-        cin >> input;
-        clear_input();
-
-        if (input == '1')
-            a.read_from_file(_file);
-        else if (input == '2')
-            a.read_from_file_some_data(_file);
-        else {
-            cout << "Неопознанная команда!" << endl;
-            return;
-        }
-
-        cout << "Данные успешно добавлены." << endl;
+        fread(dataList);
     } else {
         cout << "Неизвестная команда" << endl;
     }
@@ -109,12 +116,11 @@ void Save(DataList<CommunalPayment> data_list)
         iterator = data_list.find_if([&payment](const CommunalPayment& p) { return payment == p; });
         data_list.print_data(iterator);
         cin >> input;
-        data_list.write_to_file(_file, iterator);
+        data_list.fwrite_part(_file, iterator);
     }
     if (input == '2')
     {
-//        data_list.helper = data_list.deq; // кхе-кхе
-        data_list.write_to_file_some_data(_file);
+        data_list.fwrite_full(_file);
     }
 }
 
@@ -147,6 +153,16 @@ void Delete(DataList<CommunalPayment>& data_list)
 
 void Search(DataList<CommunalPayment> data_list)
 {
+    const std::function<bool(CommunalPayment, CommunalPayment)> comparator =
+            [](const CommunalPayment &p, const CommunalPayment &payment) {
+                if (payment == p)
+                    return 0;
+                else if (payment.penny > p.penny)
+                    return 1;
+                else
+                    return -1;
+            };
+
     CommunalPayment payment;
     deque<CommunalPayment>::iterator iterator;
     char input;
@@ -157,23 +173,26 @@ void Search(DataList<CommunalPayment> data_list)
     cin >> input;
     clear_input();
 
-    if (input == '1') {
-        iterator = data_list.find_if([&payment](const CommunalPayment &p) { return payment == p; });
-    }
-    else if (input == '2')
-    {
-        data_list.sort([](const CommunalPayment &p, const CommunalPayment &payment) {
-            if (payment == p)
-                return 0;
-            else if (payment.penny > p.penny)
-                return 1;
-            else
-                return -1;
-        });
+    if (input == '2') {
+        data_list.sort(comparator);
         iterator = data_list.lower_bound(payment);
-        iterator = iterator - 1;
+
+        if (iterator == data_list.end()) {
+            cout << "Данные не найдены" << endl;
+            return;
+        }
+
+        bool biba = !(*iterator == payment);
+        iterator = !(*iterator == payment) ? iterator - 1 : iterator;
+    } else if (input == '1') {
+        iterator = data_list.find_if([&payment](const CommunalPayment &p) { return payment == p; });
     } else {
         cout << "Неопознанная команда!" << endl;
+    }
+    bool biba = iterator == data_list.end();
+    if (iterator == data_list.end() || !(*iterator == payment)) {
+        cout << "Данные не найдены" << endl;
+        return;
     }
 
     data_list.print_data(iterator);
@@ -188,9 +207,9 @@ void Search(DataList<CommunalPayment> data_list)
         cin >> file_name;
         file_name += ".txt";
         ofstream _file(file_name, std::ios_base::app);
-        data_list.write_to_file(_file, iterator);
+        data_list.fwrite_part(_file, iterator);
         cout << "Данные успешно добавлены в файл" << endl;
-    } else if (input != '2')
+    } else if (input != '0')
         cout << "Неопознанная команда!" << endl;
 }
 
@@ -246,7 +265,7 @@ void select_by_debt_state(DataList<CommunalPayment> data_list) {
 
     is_owe = input != '0';
     data_list.copy_if([&is_owe](const CommunalPayment &p) {
-        return p.penny > 0 || p.days_past_due > 0 == is_owe;
+        return (p.penny > 0 || p.days_past_due > 0) == is_owe;
     });
 
     data_list.print_some_data();
@@ -268,11 +287,11 @@ void Selection(const DataList<CommunalPayment>& data_list)
                 break;
             }
             case '2': {
-                select_by_flat(data_list);
+                select_by_house(data_list);
                 break;
             }
             case '3': {
-                select_by_house(data_list);
+                select_by_flat(data_list);
                 break;
             }
             case '4': {

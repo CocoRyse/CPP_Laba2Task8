@@ -14,6 +14,7 @@ struct Address {
     friend std::istream & operator>>(std::istream &in, Address &address);
     friend std::ostream & operator<<(std::ostream &out, const Address &address);
     bool operator == (Address t1) const;
+    bool operator<(const Address &address) const;
 };
 
 struct Date {
@@ -22,6 +23,7 @@ struct Date {
     friend std::istream & operator>>(std::istream &in, Date &date);
     friend std::ostream & operator<<(std::ostream &out, const Date &date);
     bool operator == (Date t1) const;
+    bool operator<(const Date &date) const;
 };
 
 enum class PaymentType {
