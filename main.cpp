@@ -92,7 +92,8 @@ void Save(DataList<CommunalPayment> data_list)
     cout << "Введите имя файла: ";
     cin >> file_name;
     file_name += ".txt";
-    ofstream _file(file_name, std::ios_base::app);
+//    ofstream _file(file_name, std::ios_base::app);
+    ofstream _file(file_name, std::ios_base::out);
     cout << "1. Сохранить одну запись" << endl;
     cout << "2. Сохранить все записи" << endl;
 

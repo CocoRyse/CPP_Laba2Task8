@@ -81,6 +81,7 @@ public:
 
     void fwrite_full(ofstream& _file)
     {
+        _file.clear();
         copy(deq.begin(), deq.end(), ostream_iterator<T>(_file, "\n"));
         cout << "Данные успешно добавлены в файл" << endl;
     }
